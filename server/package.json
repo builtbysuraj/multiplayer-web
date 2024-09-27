@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "server.ts",
   "scripts": {
-    "dev": "nodemon src/server.ts"
+    "dev": "nodemon src/server.ts",
+    "start": "ts-node src/server.ts",
+    "build": "npm install"
   },
   "keywords": [],
   "author": "Suraj Gupta",
