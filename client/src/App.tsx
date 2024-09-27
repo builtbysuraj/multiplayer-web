@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { io } from "socket.io-client"
 import { Grid } from "./components/Grid"
 
-const socket = io("http://localhost:3000")
+const socket = io(import.meta.env.VITE_SERVER_URL)
 
 function App() {
   const [grid, setGrid] = useState(
@@ -13,16 +13,15 @@ function App() {
 
   const [onlineUsers, setOnlineUsers] = useState(0)
   const [hasSubmitted, setHasSubmitted] = useState(false)
-  const [timer, setTimer] = useState(0) // Store remaining time of the restriction
+  const [timer, setTimer] = useState(0)
 
   useEffect(() => {
     socket.on("connect", () => {
       console.log("Connected to server")
     })
 
-    // Listen for the initial grid and number of online users
     socket.on("initGrid", ({ grid, onlineUsers }) => {
-      setGrid(grid) // Set the grid received from the server
+      setGrid(grid)
       setOnlineUsers(onlineUsers)
     })
 
@@ -30,23 +29,20 @@ function App() {
       setGrid((prevGrid) => {
         const newGrid = [...prevGrid]
         if (newGrid[position.x] && newGrid[position.x][position.y]) {
-          newGrid[position.x][position.y] = { value, playerId } // Store both the value and the player ID
+          newGrid[position.x][position.y] = { value, playerId }
         }
         return newGrid
       })
     })
 
-    // Listen for updates on the number of online users
     socket.on("updateOnlineUsers", (users) => {
       setOnlineUsers(users)
     })
 
-    // Listen for the cleared grid from the server
     socket.on("gridCleared", (clearedGrid) => {
-      setGrid(clearedGrid) // Set the cleared grid
+      setGrid(clearedGrid)
     })
 
-    // Clean up the connection when the component unmounts
     return () => {
       socket.disconnect()
     }
@@ -70,7 +66,6 @@ function App() {
   }
 
   const handleBlockClick = (x: number, y: number) => {
-    // Ensure the grid exists and grid[x][y] is defined
     if (hasSubmitted || !grid[x] || !grid[x][y] || grid[x][y].value !== "") {
       console.log("Block already filled or submission locked")
       return
